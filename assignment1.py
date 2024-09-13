@@ -12,6 +12,7 @@ modelFit = model.fit(prophdat)
 future = modelFit.make_future_dataframe(freq = 'H', periods=744)
 forecast = modelFit.predict(future)
 
-pred = forecast[-744:]['daily']
-
+pred = list(modelFit.predict(future)['trend'])
+ 
 print(pred)
+
