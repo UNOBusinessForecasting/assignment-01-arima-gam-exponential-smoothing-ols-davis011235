@@ -1,18 +1,17 @@
+from pygam import LinearGAM, s,f,l
 import pandas as pd
-from prophet import Prophet
 
 data = pd.read_csv("https://raw.githubusercontent.com/dustywhite7/econ8310-assignment1/main/assignment_data_train.csv")
+new_data = pd.read_csv("https://raw.githubusercontent.com/UNOBusinessForecasting/assignment-01-arima-gam-exponential-smoothing-ols-davis011235/refs/heads/main/assignment_data_test.csv")
+new_data = new_data[['year', 'month', 'day']]
 
-prophdat = data[['Timestamp', 'trips']]
-prophdat.Timestamp = pd.to_datetime(prophdat.Timestamp)
-prophdat = pd.DataFrame(prophdat.values, columns = ['ds','y'])
+data.head()
+x= data[['year', 'month', 'day']]
+y = data['trips']
 
-model = Prophet()
-modelFit = model.fit(prophdat)
-future = modelFit.make_future_dataframe(freq = 'H', periods=744)
-forecast = modelFit.predict(future)
+model = LinearGAM(s(0) + s(1) + s(2))
+modelFit = model.gridsearch(x.values,y)
 
-pred = list(modelFit.predict(future)['trend'])[-744:]
- 
-print(pred)
+pred = modelFit.predict(new_data)
 
+print(pred[-20:])
